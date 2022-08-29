@@ -1,0 +1,148 @@
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <h2>Success Stories:<span id="successstories"></span> </h2>
+        </div>
+    </div>
+    <input type="hidden" id="id" class="form-control" />
+    <input type="" id="imagecode" />
+
+    <div class="row">
+        <div class="col-lg-6" style="display: flex">
+            <label>Name</label>&nbsp;&nbsp;
+            <input type="text" id="name" class="form-control" style="width: 200px;" />&nbsp;&nbsp;&nbsp;&nbsp;
+
+            <!-- <div class="col-lg-12"><br /></div> -->
+
+            <label>Package</label>&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="text" id="package" class="form-control" style="width: 200px;" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12"><br /></div>
+        <div class="col-lg-12">
+            <label>Company Name</label>
+            <input type="text" id="companyname" class="form-control"></input>
+        </div>
+
+        <div class="col-lg-12"><br /></div>
+        <div class="col-lg-12">
+            <label>Position</label>
+            <input type="text" id="possition" class="form-control"></input>
+        </div>
+
+        <div class="col-lg-12"><br /></div>
+        <div class="col-lg-12">
+            <label>Qualification</label>
+            <input type="text" id="qualification" class="form-control"></input>
+        </div>
+
+        <div class="col-lg-12"><br /></div>
+        <div class="col-lg-12">
+            <label>Image </label>
+            <input type="file" id="image" accept="image/png, image/jpeg" class="form-control"
+                onchange="encodeImage()"></input>
+        </div>
+
+
+        <div class="col-lg-12"><br /></div>
+        <div class="col-lg-12">
+            <label>Placement Month</label>
+            <input type="text" id="placementmonth" class="form-control"></input>
+        </div>
+
+        <div class="col-lg-12"><br /></div>
+        <div class="col-lg-12">
+            <button onclick="save()" class="btn btn-primary">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- List success stories -->
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <table id="mytable" class="table table-bordered table-striped">
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- api calling function -->
+
+<script>
+
+
+
+    function save() {
+        let id = $("#id").val();
+        let name = $("#name").val();
+        let package = $("#package").val();
+        let companyname = $("#companyname").val();
+        let position = $("#position").val();
+        let qualification = $("#qualification").val();
+        let imagecode = $("#imagecode").val();
+        let placementmonth = $("#placementmonth").val();
+        if (name == "") {
+            $("#name").focus();
+            return;
+        }
+        if (package == "") {
+            $("#package").focus();
+            return;
+        }
+        if (companyname == "") {
+            $("#companyname").focus();
+            return;
+        }
+        if (position == "") {
+            $("#position").focus();
+            return;
+        }
+        if (qualification == "") {
+            $("#qualification").focus();
+            return;
+        }
+        if (imagecode == "") {
+            $("#imagepath").focus();
+            return;
+        }
+        if (placementmonth == "") {
+            $("#placementmonth").focus();
+            return;
+        }
+        let data = { data: { id: id, name: name, package: package, companyname: companyname, position: position, qualification: qualification, imagecode: imagecode, placementmonth: placementmonth } };
+        console.log(data);
+        $.ajax({
+            url: "http://localhost:8081/savesuccessstories",
+            type: 'post',
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function (result) {
+                window.location.replace("../admin/stories");
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        })
+    }
+
+    function encodeImage() {
+
+        var filesSelected = document.getElementById("image").files;
+        if (filesSelected.length > 0) {
+            var fileToLoad = filesSelected[0];
+            var fileReader = new FileReader();
+            fileReader.onload = function (fileLoadedEvent) {
+                var srcData = fileLoadedEvent.target.result; // <--- data: base64
+                $("#imagecode").val(srcData);
+            }
+            fileReader.readAsDataURL(fileToLoad);
+        }
+    }
+
+
+</script>

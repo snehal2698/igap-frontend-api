@@ -1,0 +1,74 @@
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <table id="mytable" class="table table-bordered table-striped">              
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    function loadData()
+    {
+        $.ajax({
+            url:"http://localhost:8081/listcourse",
+            type:"post",
+            dataType:"json",
+            contentType:"application/json",
+            data:{},
+            success:(result)=>{
+                let data = result.data;
+                let count = 1;               
+                let table = $("#mytable");
+                table.html("");
+                table.append("<tr><th>No</th><th>Name</th><th>Image</th><th>Description</th><th></th></tr>");
+                data.forEach(course => {
+                    let row = "<tr>";
+                    row += "<td>" + count + "</td>";
+                    row += "<td>" + course.name + "</td>";
+                    row += "<td><img style='height:80px;' src='http://localhost:8081/" + course.imgpath + "' /></td>";
+                    row += "<td>" + course.description + "</td>";
+                    row += "<td><a class='btn btn-primary' href='../admin/course?id=" + course.id + "'>Edit</a>";
+                    row += "<button onclick='deletecourse(" + course.id + ")' class='btn btn-danger'>Delete</button>";
+                    row += "<a class='btn btn-warning' href='../admin/coursetopics?courseid=" + course.id + "'>Topics</a>";
+                    row += "</td>";
+                    row += "</tr>";
+                    table.append(row);
+                    count++;
+                });
+            },
+            error:(err)=>{
+                console.log(err);
+            }
+        })
+    }
+
+    $(document).ready(()=>{
+        loadData();
+    })
+
+    function deletecourse(id){
+        if(confirm("Sure to delete?"))
+        {
+            $.ajax({
+                url:"http://localhost:8081/deletecourse",
+                type:"post",
+                dataType:"json",
+                contentType:"application/json",
+                data:JSON.stringify({data:{id:id}}),
+                success:(result)=>{
+                    if(result.status == "fail")
+                    {
+                        alert(result.data.sqlMessage);
+                    }
+                    else{
+                        loadData();
+                    }
+                },
+                error:(err)=>{
+                    console.log(err);
+                }
+            });
+        }
+    }
+</script>
